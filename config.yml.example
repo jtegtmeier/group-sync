@@ -1,0 +1,7 @@
+sync-groups:
+    your-group-to-sync:
+        sync-history: true
+        discord-guild: "Your Discord Guild"
+        discord-channel: "your-discord-channel"
+        groupme-group: "Your GroupMe Group"
+        groupme-bot-id: "xxxxxxxxxxxxxxxxxxxxxxxxxx"
