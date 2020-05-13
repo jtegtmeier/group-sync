@@ -1,0 +1,7 @@
+sync-groups:
+    music-drifters:
+        sync-history: true
+        discord-guild: "Naughty Warriors"
+        discord-channel: "music-drifters"
+        groupme-group: "Test Group"
+        groupme-bot-id: "5f4790965df488e6127fea3e70"

@@ -1,2 +1,2 @@
 # group-sync
-A webserver to sync chat groups
+A web service to sync chat groups

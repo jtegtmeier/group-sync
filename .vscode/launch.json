@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev-debug"
+            ],
+            "port": 9229
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Hot",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev-debug-hot"
+            ],
+            "port": 9229,
+            "restart": true
+        }
+    ]
+}
