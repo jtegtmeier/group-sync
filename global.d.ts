@@ -1,5 +1,5 @@
 type Message = {
     user: string
-    timestamp: Date
+    createdOn: Date
     content: string
 }

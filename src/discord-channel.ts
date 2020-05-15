@@ -1,6 +1,9 @@
 import * as DiscordJS from 'discord.js'
 import { format } from 'date-fns'
 
+/**
+ * Class representing a Discord Channel
+ */
 export default class DiscordChannel {
     _accessToken: string
     _discordJSClient: DiscordJS.Client
@@ -17,6 +20,9 @@ export default class DiscordChannel {
         this._discordJSClient.login(this._accessToken)
     }
 
+    /**
+     * Initialize the GroupMe Websocket Stream
+     */
     async init() {
         return new Promise(resolve => {
             this._discordJSClient.once('ready', () => {
@@ -28,26 +34,25 @@ export default class DiscordChannel {
                 if (((channel): channel is DiscordJS.TextChannel => channel.type === 'text')(channel)){
                     this._channel = channel
                 }
-                console.log('Discord client running')
+                console.log('Discord client connected')
                 resolve()
             })
         })
     }
 
-    async getMessageHistory() {
+    async getMessageHistory(): Promise<Message[]> {
         return await this._channel.messages.fetch().then(messages => 
             messages.filter(message => message.author.bot === false)
             .map(message => ({
-                id: message.id,
-                timestamp: message.createdTimestamp,
                 user: message.author.username,
+                createdOn: new Date(message.createdTimestamp),
                 content: message.content,
             }))
         )
     }
 
     postMessage(message: Message) {
-        this._channel.send(`${message.user} posted at ${format(message.timestamp, "hh:mm a d/M/Y")}\n${message.content}`)
+        this._channel.send(`${message.user} posted at ${format(message.createdOn, "hh:mm a d/M/Y")}\n${message.content}`)
     }
 
     onMessagePost(cb: (message: Message) => void) {
@@ -55,7 +60,7 @@ export default class DiscordChannel {
             if (message.channel.id === this._channel.id && !message.member.user.bot){
                 cb({
                     user: message.member.user.username,
-                    timestamp: new Date(),
+                    createdOn: new Date(message.createdTimestamp * 1000),
                     content: message.content
                 })
             }

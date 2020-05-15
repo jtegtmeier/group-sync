@@ -1,15 +1,15 @@
 import { config as dotenvConfig } from 'dotenv'
-import * as fs from 'fs'
+import { readFileSync } from 'fs'
 import DiscordChannel from './discord-channel'
 import GroupMeGroup from './group-me-group'
-import * as yaml from 'js-yaml'
+import { safeLoad } from 'js-yaml'
 
 // Configure environment
 dotenvConfig()
 
 // Main method
 async function server() {
-    const config = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'))
+    const config = safeLoad(readFileSync('./config.yml', 'utf8'))
 
     for (const groupName in config["sync-groups"]) {
         const syncGroup = config["sync-groups"][groupName]
@@ -33,7 +33,7 @@ async function server() {
             // Check if the history needs syncing
             if (syncGroup['sync-history']) {
                 console.log('Syncing history...')
-                await syncHistory()
+                await syncHistory(discordChannel, groupMeGroup)
             }
 
             groupMeGroup.onMessagePost((message: Message) => {
@@ -50,9 +50,15 @@ async function server() {
     }
 }
 
-// Sync History of all groups
-async function syncHistory(){
-
+/**
+ *  Sync the history of provided groups
+ * 
+ * @param discordChannel 
+ * @param groupMeGroup 
+ */
+async function syncHistory(discordChannel: DiscordChannel, groupMeGroup: GroupMeGroup){
+    const discordMessages = await discordChannel.getMessageHistory()
+    console.log(discordMessages)
 }
 
 // Run the server

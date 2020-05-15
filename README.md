@@ -7,7 +7,7 @@ A web service to sync chat groups
 ## Configuration
 Access tokens are placed in `.env` and group/channel names in `config.yml`. Multiple "sync-groups" can be specified in `config.yml` (uses the same access tokens).
 
-See the "example" files for help.
+See the ".example" files for help.
 
 ## Build
 `npm run build`
@@ -21,4 +21,4 @@ See the "example" files for help.
 ## Debuging
 `npm run dev-debug` or `npm run dev-debug-hot`
 
-*Note: these commands can be launched from VSCode to allow for inspection*
+*Note: these commands can be launched from the VSCode "Run" tab to allow for inspection*

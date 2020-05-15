@@ -1,6 +1,9 @@
 import { Stateless as GroupMe, IncomingStream as GroupMeStream } from 'groupme'
 import { format } from 'date-fns'
 
+/**
+ * Class representing a GroupMe Group
+ */
 export default class GroupMeGroup {
     _accessToken: string
     _groupName: string
@@ -15,6 +18,9 @@ export default class GroupMeGroup {
         this._groupName = groupName
     }
 
+    /**
+     * Initialize the GroupMe Websocket Stream
+     */
     async init() {
         this._groupId = await GroupMe.Groups.index.Q(this._accessToken)
             .then((data) => data.find(({ name }) => name == this._groupName).id)
@@ -23,13 +29,22 @@ export default class GroupMeGroup {
         this._stream = new GroupMeStream(this._accessToken, this._userId, [this._groupId])
         this._stream.connect()
         await new Promise(resolve => {
-            this._stream.on('connected', () => {
-                console.log('GroupMe client running')
-                resolve()
+            this._stream.on('status', (message) => {
+                if (message === "Websocket Connected") {
+                    setTimeout(() => {
+                        console.log('GroupMe client connected')
+                        resolve()
+                    },1000)
+                }
             })
         })
     }
 
+    /**
+     * Returns messages starting at an optional id
+     * 
+     * @param beforeId The id of the group message to start from
+     */
     async getMessages(beforeId?: string) {
         return GroupMe.Messages.index.Q(this._accessToken, this._groupId, { before_id: beforeId }).then(data => data)
     }
@@ -58,7 +73,7 @@ export default class GroupMeGroup {
             if (data.data && data.data.type === "line.create" && data.data.subject.sender_type !== 'bot'){
                 cb({
                     user: data.data.subject.name,
-                    timestamp: new Date(data.data.subject.created_at * 1000),
+                    createdOn: new Date(data.data.subject.created_at * 1000),
                     content: data.data.subject.text
                 })
             }
@@ -70,7 +85,7 @@ export default class GroupMeGroup {
         GroupMe.Bots.post.Q(
             this._accessToken,
             this._botId,
-            `${message.user} posted at ${format(message.timestamp, "hh:mm a d/M/Y")}\n${message.content}`,
+            `${message.user} posted at ${format(message.createdOn, "hh:mm a d/M/Y")}\n${message.content}`,
             {}
         )
     }
