@@ -7,7 +7,9 @@ import { safeLoad } from 'js-yaml'
 // Configure environment
 dotenvConfig()
 
-// Main method
+/**
+ * Main server method
+ */
 async function server() {
     const config = safeLoad(readFileSync('./config.yml', 'utf8'))
 
@@ -58,7 +60,30 @@ async function server() {
  */
 async function syncHistory(discordChannel: DiscordChannel, groupMeGroup: GroupMeGroup){
     const discordMessages = await discordChannel.getMessageHistory()
-    console.log(discordMessages)
+    const groupmeMessages = await groupMeGroup.getMessageHistory()
+
+    const missingGroupmeMessages = findMissingMessages(discordMessages, groupmeMessages)
+    const missingDiscordMessages = findMissingMessages(groupmeMessages, discordMessages)
+
+    return
+}
+
+/**
+ * Returns any messages missing from sourceMessageList in targetMessageList
+ */
+function findMissingMessages(targetMessageList: Message[], sourceMessageList: Message[]){
+    let missing: Message[] = []
+    targetMessageList.forEach((targetMessage => {
+        const foundMessage = sourceMessageList.find(
+            sourceMessage => Object.keys(sourceMessage)
+                .filter(key => (key === "content" || key === "date"))
+                .every(key => sourceMessage[key] === targetMessage[key])
+        )
+        if (!foundMessage) {
+            missing.push(targetMessage)
+        }
+    }))
+    return missing
 }
 
 // Run the server

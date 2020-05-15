@@ -49,17 +49,22 @@ export default class GroupMeGroup {
         return GroupMe.Messages.index.Q(this._accessToken, this._groupId, { before_id: beforeId }).then(data => data)
     }
 
-    async getMessageHistory() {
+    async getMessageHistory(): Promise<Message[]> {
         let lastMessageId
         let data
-        const result = []
+        let result = []
         do {
             if (data && data.messages[data.messages.length - 1]) {
                 lastMessageId = data.messages[data.messages.length - 1].id
             }
             try {
                 data = await this.getMessages(lastMessageId)
-                result.push(...data.messages)
+                result = result.concat(data.messages.map(message => ({
+                    user: message.name,
+                    createdOn: new Date(message.created_at * 1000),
+                    content: message.text,
+                    bot: message.sender_type === "bot"
+                })))
             }
             catch {
                 break
@@ -74,7 +79,8 @@ export default class GroupMeGroup {
                 cb({
                     user: data.data.subject.name,
                     createdOn: new Date(data.data.subject.created_at * 1000),
-                    content: data.data.subject.text
+                    content: data.data.subject.text,
+                    bot: data.data.subject.sender_type === "bot"
                 })
             }
         })

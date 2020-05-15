@@ -10,7 +10,10 @@
                 "run",
                 "dev-debug"
             ],
-            "port": 9229
+            "port": 9229,
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
         },
         {
             "type": "node",
@@ -22,7 +25,10 @@
                 "dev-debug-hot"
             ],
             "port": 9229,
-            "restart": true
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
         }
     ]
 }

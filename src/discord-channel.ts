@@ -47,6 +47,7 @@ export default class DiscordChannel {
                 user: message.author.username,
                 createdOn: new Date(message.createdTimestamp),
                 content: message.content,
+                bot: message.author.bot
             }))
         )
     }
@@ -61,7 +62,8 @@ export default class DiscordChannel {
                 cb({
                     user: message.member.user.username,
                     createdOn: new Date(message.createdTimestamp * 1000),
-                    content: message.content
+                    content: message.content,
+                    bot: message.author.bot
                 })
             }
         })
