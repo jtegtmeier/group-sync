@@ -34,26 +34,52 @@ export default class DiscordChannel {
                 if (((channel): channel is DiscordJS.TextChannel => channel.type === 'text')(channel)){
                     this._channel = channel
                 }
-                console.log('Discord client connected')
+                console.log(`Discord channel "${this._guildName} -> ${this._channelName}" connected`)
                 resolve()
             })
         })
     }
 
     async getMessageHistory(): Promise<Message[]> {
-        return await this._channel.messages.fetch().then(messages => 
-            messages.filter(message => message.author.bot === false)
-            .map(message => ({
-                user: message.author.username,
-                createdOn: new Date(message.createdTimestamp),
-                content: message.content,
-                bot: message.author.bot
-            }))
-        )
+        let lastMessageId: string
+        let result: Message[] = []
+        do {
+            try {
+                const messageData = await this._channel.messages
+                    .fetch({ limit: 100, before: lastMessageId })
+                    .then(messages => {
+                        if(!messages.size){
+                            return
+                        }
+                        lastMessageId = messages.array()[messages.size-1].id
+                        return messages.map(message => ({
+                            user: message.author.username,
+                            createdOn: new Date(message.createdTimestamp),
+                            content: message.content,
+                            bot: message.author.bot
+                        })
+                    )
+                })
+                if (!messageData){
+                    break
+                }
+                result = result.concat(messageData)
+            }
+            catch (error) {
+                console.log("Error getting discord messages")
+                throw error
+            }
+        } while (true)
+        return result
     }
 
-    postMessage(message: Message) {
-        this._channel.send(`${message.user} posted at ${format(message.createdOn, "hh:mm a d/M/Y")}\n${message.content}`)
+    async postMessage(message: Message) {
+        if (!message.bot) {
+            return new Promise(resolve => {
+                this._channel.send(`${message.user} posted at ${format(message.createdOn, "hh:mm a M/d/Y")}\n${message.content}`)
+                setTimeout(() => {resolve()},500)
+            })
+        }
     }
 
     onMessagePost(cb: (message: Message) => void) {
@@ -61,7 +87,7 @@ export default class DiscordChannel {
             if (message.channel.id === this._channel.id && !message.member.user.bot){
                 cb({
                     user: message.member.user.username,
-                    createdOn: new Date(message.createdTimestamp * 1000),
+                    createdOn: new Date(message.createdTimestamp),
                     content: message.content,
                     bot: message.author.bot
                 })

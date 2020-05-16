@@ -1,7 +1,13 @@
-sync-groups:
-    your-group-to-sync:
-        sync-history: true
-        discord-guild: "Your Discord Guild"
-        discord-channel: "your-discord-channel"
-        groupme-group: "Your GroupMe Group"
-        groupme-bot-id: "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+syncGroups:
+    1stGroupNameToSync:
+        syncHistory: true
+        discordGuildName: "Your Discord Guild Name"
+        discordChannelName: "your-discord-channel-name"
+        groupMeGroupName: "Your GroupMe Group Name"
+        groupMeBotId: "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+    2ndGroupNameToSync:
+        syncHistory: false
+        discordGuildName: "Your Discord Guild Name"
+        discordChannelName: "your-discord-channel-name"
+        groupMeGroupName: "Your GroupMe Group Name"
+        groupMeBotId: "xxxxxxxxxxxxxxxxxxxxxxxxxx"
