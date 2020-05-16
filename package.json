@@ -1,6 +1,6 @@
 {
   "name": "group-sync",
-  "version": "1.0.0-0",
+  "version": "1.0.0",
   "description": "A web service to sync chat groups",
   "repository": {
     "type": "git",
